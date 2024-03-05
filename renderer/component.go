@@ -5,5 +5,5 @@ import (
 )
 
 type Component interface {
-	Node() (*html.Node, error)
+	Node(f Frame) (*html.Node, error)
 }

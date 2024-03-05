@@ -15,6 +15,15 @@ func NewModule(app *core.App) core.Module {
 	return &Module{}
 }
 
+func (m *Module) GetCommands() map[string]core.Command {
+	return map[string]core.Command{
+		"build": {
+			Function: build,
+			Help:     "builds all the tempaltes, css and js files",
+		},
+	}
+}
+
 func (m *Module) GetEmptyConfig() any {
 	return Config{}
 }
