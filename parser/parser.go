@@ -21,27 +21,31 @@ func GetContentsInstance(n *yaml.Node) (renderer.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	// TODO: This should be handled more gracefully
+	if t.Type == "" {
+		t.Type = "template"
+	}
 	if p, ok := parsers[t.Type]; ok {
 		return reflect.New(p).Interface().(renderer.Component), nil
 	}
 	return nil, fmt.Errorf("parser type %s not defined", t.Type)
 }
-func GetType(unmarshal func(interface{}) error) (string, error) {
-	t := &Typer{}
-	err := unmarshal(t)
-	if err != nil {
-		return "", err
-	}
-	return t.Type, nil
-}
 
-func GetInstance(n string) (renderer.Component, error) {
-	if p, ok := parsers[n]; ok {
-		return reflect.New(p).Interface().(renderer.Component), nil
-	}
-	return nil, fmt.Errorf("parser type %s not defined", n)
-}
+//func GetType(unmarshal func(interface{}) error) (string, error) {
+//	t := &Typer{}
+//	err := unmarshal(t)
+//	if err != nil {
+//		return "", err
+//	}
+//	return t.Type, nil
+//}
+//
+//func GetInstance(n string) (renderer.Component, error) {
+//	if p, ok := parsers[n]; ok {
+//		return reflect.New(p).Interface().(renderer.Component), nil
+//	}
+//	return nil, fmt.Errorf("parser type %s not defined", n)
+//}
 
 var parsers = map[string]reflect.Type{}
 
@@ -64,10 +68,10 @@ func (p *RenderParser) UnmarshalYAML(n *yaml.Node) error {
 	return nil
 }
 
-type RenderListParser struct {
-	field    string
-	Renderer []renderer.Component
-}
+//type RenderListParser struct {
+//	field    string
+//	Renderer []renderer.Component
+//}
 
 func ParseRenderer(s string, n *yaml.Node) (renderer.Component, error) {
 	// find the label node

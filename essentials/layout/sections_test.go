@@ -51,9 +51,9 @@ contents:
 	b := []byte{}
 	w := buffer.NewWriter(b)
 	//err = html.Render(w, s.Node())
-	//f := &renderer.FrameRender{}
+	f := &renderer.FrameRender{}
 	//err = s.Render(context.Background(), w, f)
-	n, err := s.Node()
+	n, err := s.Node(f)
 	assert.NoError(t, err)
 	err = html.Render(w, n)
 	assert.NoError(t, err)

@@ -1,0 +1,4 @@
+name: "Default Footer"
+contents:
+  - type: html
+    content: "<div><small>footer</small></div>"

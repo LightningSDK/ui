@@ -19,7 +19,7 @@ func (s *Columns) UnmarshalYAML(n *yaml.Node) error {
 	return err
 }
 
-func (s *Columns) Node() (*html.Node, error) {
+func (s *Columns) Node(f renderer.Frame) (*html.Node, error) {
 	wn := &html.Node{
 		Type: html.ElementNode,
 		Data: "div",
@@ -35,7 +35,7 @@ func (s *Columns) Node() (*html.Node, error) {
 				Val: "col " + class,
 			}},
 		}
-		ch, err := c.Node()
+		ch, err := c.Node(f)
 		if err != nil {
 			return nil, err
 		}

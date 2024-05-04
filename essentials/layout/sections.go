@@ -19,7 +19,7 @@ func (s *Sections) UnmarshalYAML(n *yaml.Node) error {
 	return err
 }
 
-func (s *Sections) Node() (*html.Node, error) {
+func (s *Sections) Node(f renderer.Frame) (*html.Node, error) {
 	attr := []html.Attribute{}
 	if s.Class != "" {
 		attr = append(attr, html.Attribute{
@@ -47,7 +47,7 @@ func (s *Sections) Node() (*html.Node, error) {
 			Data: "section",
 			Attr: cattr,
 		}
-		sn, err := c.Node()
+		sn, err := c.Node(f)
 		if err != nil {
 			return nil, err
 		}

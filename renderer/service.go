@@ -1,19 +1,22 @@
 package renderer
 
 import (
+	"bytes"
 	"context"
 	"errors"
 )
 
 type ServiceImpl struct {
-	Templates map[string]any
+	Templates map[string]Component
 }
 type Service interface {
-	RenderWithTemplate(ctx context.Context, template string, wrapper int) (string, error)
+	RenderWithTemplate(ctx context.Context, template string) (*bytes.Buffer, error)
 }
 
-func New() Service {
-	return &ServiceImpl{}
+func New(t map[string]Component) Service {
+	return &ServiceImpl{
+		Templates: t,
+	}
 }
 
 func (s *ServiceImpl) LoadAll() error {
@@ -29,12 +32,12 @@ func (s *ServiceImpl) Compile() error {
 	return nil
 }
 
-func (s *ServiceImpl) RenderWithTemplate(ctx context.Context, template string, wrapper int) (string, error) {
+func (s *ServiceImpl) RenderWithTemplate(ctx context.Context, template string) (*bytes.Buffer, error) {
 	// load the template
 	t, ok := s.Templates[template]
 	if !ok {
-		return "", errors.New("template not found")
+		return nil, errors.New("template not found")
 	}
 
-	return render(ctx, t, wrapper)
+	return render(ctx, t)
 }

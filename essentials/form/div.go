@@ -12,7 +12,8 @@ type Div struct {
 	Contents []renderer.Component `yaml:"contents"`
 }
 
-func (d *Div) Node() (*html.Node, error) {
+func (d *Div) Node(f renderer.Frame) (*html.Node, error) {
+	f.AddJSFile("")
 	n := &html.Node{
 		Type: html.ElementNode,
 		Data: "div",
@@ -25,7 +26,7 @@ func (d *Div) Node() (*html.Node, error) {
 	}
 
 	for _, c := range d.Contents {
-		cn, err := c.Node()
+		cn, err := c.Node(f)
 		if err != nil {
 			return nil, err
 		}

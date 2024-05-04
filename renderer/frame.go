@@ -32,20 +32,23 @@ type BrowserFrame struct {
 	JSParams map[string]any
 }
 
-func (b *BrowserFrame) AddJSFile(name, path string) {
-	b.JSFiles[name] = path
+func (b *BrowserFrame) AddJSFile(path string) {
+	b.JSFiles[path] = path
 }
-func (b *BrowserFrame) AddCSSFile(name, path string) {
-	b.CSSFiles[name] = path
+func (b *BrowserFrame) AddCSSFile(path string) {
+	b.CSSFiles[path] = path
 }
 func (b *BrowserFrame) AddJSParam(name string, value any) {
 	b.JSParams[name] = value
 }
 
 type FrameRender struct {
+	JSFiles  map[string]string
+	CSSFiles map[string]string
+	JSParams map[string]any
 }
 
-func render(ctx context.Context, template Component, wrapper int) (string, error) {
+func render(ctx context.Context, template Component) (*bytes.Buffer, error) {
 	// the template should have a type and each type should have its own renderer.
 	// starting at the root level
 	// there can be a page renderer added at the top level, that will contain the metadata
@@ -55,17 +58,27 @@ func render(ctx context.Context, template Component, wrapper int) (string, error
 
 	b := []byte{}
 	w := bytes.NewBuffer(b)
-	f := PageFrame{}
+	f := &PageFrame{}
 
 	// forget the wrapper for now, lets just render the template
 	n, err := template.Node(f)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	err = html.Render(w, n)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return "", nil
+	return w, nil
+}
+
+func (f *FrameRender) AddJSFile(path string) {
+	f.JSFiles[path] = path
+}
+func (f *FrameRender) AddCSSFile(path string) {
+	f.CSSFiles[path] = path
+}
+func (f *FrameRender) AddJSParam(name string, value any) {
+	f.JSParams[name] = value
 }

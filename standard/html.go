@@ -17,7 +17,7 @@ func (h *HTML) Render(ctx context.Context, w io.Writer, f renderer.Frame) error 
 	return err
 }
 
-func (h *HTML) Node() (*html.Node, error) {
+func (h *HTML) Node(f renderer.Frame) (*html.Node, error) {
 	return &html.Node{
 		Parent:      nil,
 		FirstChild:  nil,
