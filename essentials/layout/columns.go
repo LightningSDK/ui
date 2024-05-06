@@ -15,7 +15,7 @@ type Columns struct {
 
 func (s *Columns) UnmarshalYAML(n *yaml.Node) error {
 	var err error
-	s.Contents, err = parser.ParseRendererList("contents", n)
+	_, s.Contents, err = parser.ParseRendererList("contents", n)
 	return err
 }
 

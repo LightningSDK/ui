@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"github.com/lightningsdk/core"
 	"github.com/lightningsdk/ui/essentials"
 	"github.com/lightningsdk/ui/essentials/layout"
@@ -40,6 +41,7 @@ func initParsers() {
 		"html":     standard.HTML{},
 		"sections": layout.Sections{},
 		"template": essentials.Template{},
+		"div":      essentials.Div{},
 	} {
 		// TODO: handle this error
 		_ = parser.AddType(k, reflect.TypeOf(v))
@@ -60,8 +62,17 @@ func getTemplates() map[string]renderer.Component {
 				}
 				template := parser.RenderParser{}
 				data, err := os.ReadFile(path)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
 				name, err := filepath.Rel(p, path)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
 				err = yaml.Unmarshal(data, &template)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
 				c[name] = template.Renderer
 				return nil
 			})

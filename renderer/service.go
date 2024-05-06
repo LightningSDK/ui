@@ -10,7 +10,7 @@ type ServiceImpl struct {
 	Templates map[string]Component
 }
 type Service interface {
-	RenderWithTemplate(ctx context.Context, template string) (*bytes.Buffer, error)
+	RenderTemplate(ctx context.Context, template string) (*bytes.Buffer, error)
 }
 
 func New(t map[string]Component) Service {
@@ -32,7 +32,7 @@ func (s *ServiceImpl) Compile() error {
 	return nil
 }
 
-func (s *ServiceImpl) RenderWithTemplate(ctx context.Context, template string) (*bytes.Buffer, error) {
+func (s *ServiceImpl) RenderTemplate(ctx context.Context, template string) (*bytes.Buffer, error) {
 	// load the template
 	t, ok := s.Templates[template]
 	if !ok {

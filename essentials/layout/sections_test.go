@@ -15,34 +15,59 @@ import (
 func Test_Sections(t *testing.T) {
 	err := parser.AddType("html", reflect.TypeOf(standard.HTML{}))
 	assert.NoError(t, err)
-	err = parser.AddType("sections", reflect.TypeOf(Sections{}))
+	err = parser.AddType("sections", reflect.TypeOf(Node{}))
+	assert.NoError(t, err)
+	err = parser.AddType("section", reflect.TypeOf(Node{}))
 	assert.NoError(t, err)
 
-	ey := `type: sections
+	ey := `
+type: sections
 class: "outer"
 childClass: "inner"
+name: "template"
 contents:
-  - type: html
+  - type: section
     name: header
-    class: "scetion one"
-	id: section_one
-    contents: <div>contents</div>
+    class: "section one"
+    id: section_one
+    contents:
+      type: html
+      contents: <div>contents</div>
   - type: html
     name: body
+    class: "section two"
+    id: section_two
     contents: "{{ contents2 }}"
 `
-	s := &Sections{}
+	s := &Node{}
 	err = yaml.Unmarshal([]byte(ey), s)
 	assert.NoError(t, err)
-	assert.Equal(t, &Sections{
+	assert.Equal(t, &Node{
+		Element: "sections",
+		Name:    "template",
+		Class:   "outer",
 		Contents: []renderer.Component{
-			&standard.HTML{
-				Contents: "<div>contents</div>",
-				JS:       "",
+			&Node{
+				Element: "section",
+				Name:    "header",
+				Class:   "section one",
+				ID:      "section_one",
+				Contents: []renderer.Component{
+					&HTML{
+						Contents: "<div>contents</div>",
+					},
+				},
 			},
-			&standard.HTML{
-				Contents: "{{ contents2 }}",
-				JS:       "",
+			&Node{
+				Element: "section",
+				Name:    "body",
+				Class:   "section two",
+				ID:      "section_two",
+				Contents: []renderer.Component{
+					&HTML{
+						Contents: "{{ contents2 }}",
+					},
+				},
 			},
 		},
 	}, s)

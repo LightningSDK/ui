@@ -13,7 +13,7 @@ type Form struct {
 	Class    string               `yaml:"class"`
 }
 
-func (f *Form) Node() (*html.Node, error) {
+func (f *Form) Node(fr renderer.Frame) (*html.Node, error) {
 	n := &html.Node{
 		Type: html.ElementNode,
 		Data: "form",
@@ -44,7 +44,7 @@ func (f *Form) Node() (*html.Node, error) {
 	}
 
 	for _, c := range f.Contents {
-		cn, err := c.Node()
+		cn, err := c.Node(fr)
 		if err != nil {
 			return nil, err
 		}

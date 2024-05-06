@@ -14,7 +14,7 @@ type Template struct {
 
 func (s *Template) UnmarshalYAML(n *yaml.Node) error {
 	var err error
-	s.Contents, err = parser.ParseRendererList("contents", n)
+	_, s.Contents, err = parser.ParseRendererList("contents", n)
 	return err
 }
 

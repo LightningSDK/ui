@@ -1,7 +1,7 @@
 name: "Default Template"
 contents:
   - type: template
-    name: default_header
+    name: header
   - type: body # this is where the page content will be filled
   - type: template
-    name: default_footer
+    name: footer
