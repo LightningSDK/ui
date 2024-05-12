@@ -8,13 +8,9 @@ import (
 )
 
 type Node struct {
-	Element    string
-	Contents   []renderer.Component
-	Name       string // should be deleted and use attrs
-	Class      string // should be deleted and use attrs
-	ChildClass string // should be deleted and use attrs
-	ID         string // should be deleted and use attrs
-	Attrs      map[string]string
+	Element  string
+	Contents []renderer.Component
+	Attrs    map[string]string
 }
 
 type HTML struct {
@@ -70,12 +66,6 @@ func (no *Node) UnmarshalYAML(n *yaml.Node) error {
 		switch k {
 		case "type":
 			no.Element = vn.Value
-		case "name":
-			no.Name = vn.Value
-		case "class":
-			no.Class = vn.Value
-		case "id":
-			no.ID = vn.Value
 		case "contents":
 			children = vn
 		default:
@@ -95,6 +85,16 @@ func (no *Node) UnmarshalYAML(n *yaml.Node) error {
 	}
 
 	return nil
+}
+
+func (n *Node) MarshalYAML() (interface{}, error) {
+	out := map[string]interface{}{}
+	for k, v := range n.Attrs {
+		out[k] = v
+	}
+	out["type"] = n.Element
+	out["contents"] = n.Contents
+	return out, nil
 }
 
 // example input from above
@@ -183,10 +183,10 @@ func getElementAndContents(n *yaml.Node) (map[string]any, error) {
 
 func (no *Node) Node(f renderer.Frame) (*html.Node, error) {
 	attr := []html.Attribute{}
-	if no.Class != "" {
+	for k, v := range no.Attrs {
 		attr = append(attr, html.Attribute{
-			Key: "class",
-			Val: no.Class,
+			Key: k,
+			Val: v,
 		})
 	}
 	n := &html.Node{
@@ -216,7 +216,20 @@ func (h *HTML) UnmarshalYAML(n *yaml.Node) error {
 
 	return nil
 }
+
+func (h *HTML) MarshalYAML() (interface{}, error) {
+	return map[string]string{
+		"type":     "html",
+		"contents": h.Contents,
+	}, nil
+}
+
 func (h *HTML) Node(f renderer.Frame) (*html.Node, error) {
+	return &html.Node{
+		Type: html.RawNode,
+		Data: h.Contents,
+	}, nil
+
 	//attr := []html.Attribute{}
 	//if no.Class != "" {
 	//	attr = append(attr, html.Attribute{
@@ -238,5 +251,5 @@ func (h *HTML) Node(f renderer.Frame) (*html.Node, error) {
 	//	n.AppendChild(sn)
 	//}
 
-	return nil, nil
+	//return nil, nil
 }

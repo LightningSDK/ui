@@ -23,7 +23,6 @@ func Test_Sections(t *testing.T) {
 	ey := `
 type: sections
 class: "outer"
-childClass: "inner"
 name: "template"
 contents:
   - type: section
@@ -41,14 +40,18 @@ contents:
 `
 	expectedObjects := &Node{
 		Element: "sections",
-		Name:    "template",
-		Class:   "outer",
+		Attrs: map[string]string{
+			"name":  "template",
+			"class": "outer",
+		},
 		Contents: []renderer.Component{
 			&Node{
 				Element: "section",
-				Name:    "header",
-				Class:   "section one",
-				ID:      "section_one",
+				Attrs: map[string]string{
+					"name":  "header",
+					"class": "section one",
+					"id":    "section_one",
+				},
 				Contents: []renderer.Component{
 					&HTML{
 						Contents: "<div>contents</div>",
@@ -57,9 +60,11 @@ contents:
 			},
 			&Node{
 				Element: "section",
-				Name:    "body",
-				Class:   "section two",
-				ID:      "section_two",
+				Attrs: map[string]string{
+					"name":  "body",
+					"class": "section two",
+					"id":    "section_two",
+				},
 				Contents: []renderer.Component{
 					&HTML{
 						Contents: "{{ contents2 }}",
@@ -69,7 +74,25 @@ contents:
 		},
 	}
 
-	expectedMarshaledYAML := ``
+	expectedMarshaledYAML := `type: sections
+class: "outer"
+name: "template"
+contents:
+  - type: section
+    name: header
+    class: "section one"
+    id: section_one
+    contents:
+      - type: html
+        contents: <div>contents</div>
+  - type: section
+    name: body
+    class: "section two"
+    id: section_two
+    contents:
+    - type: html
+      contents: "{{ contents2 }}"
+`
 
 	s := &Node{}
 	err = yaml.Unmarshal([]byte(ey), s)
@@ -78,9 +101,9 @@ contents:
 
 	my, err := yaml.Marshal(expectedObjects)
 	assert.NoError(t, err)
-	assert.Equal(t, expectedMarshaledYAML, my)
+	assert.YAMLEq(t, expectedMarshaledYAML, string(my))
 
-	ex := `<section>header</section><section>body</section>`
+	ex := `<sections name="template" class="outer"><section class="section one" id="section_one" name="header"><div>contents</div></section><section name="body" class="section two" id="section_two">{{ contents2 }}</section></sections>`
 	b := []byte{}
 	w := buffer.NewWriter(b)
 	//err = html.Render(w, s.Node())
