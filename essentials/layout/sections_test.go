@@ -39,10 +39,7 @@ contents:
     id: section_two
     contents: "{{ contents2 }}"
 `
-	s := &Node{}
-	err = yaml.Unmarshal([]byte(ey), s)
-	assert.NoError(t, err)
-	assert.Equal(t, &Node{
+	expectedObjects := &Node{
 		Element: "sections",
 		Name:    "template",
 		Class:   "outer",
@@ -70,7 +67,18 @@ contents:
 				},
 			},
 		},
-	}, s)
+	}
+
+	expectedMarshaledYAML := ``
+
+	s := &Node{}
+	err = yaml.Unmarshal([]byte(ey), s)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedObjects, s)
+
+	my, err := yaml.Marshal(expectedObjects)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedMarshaledYAML, my)
 
 	ex := `<section>header</section><section>body</section>`
 	b := []byte{}

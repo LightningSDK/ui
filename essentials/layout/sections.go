@@ -10,10 +10,10 @@ import (
 type Node struct {
 	Element    string
 	Contents   []renderer.Component
-	Name       string
-	Class      string
-	ChildClass string
-	ID         string
+	Name       string // should be deleted and use attrs
+	Class      string // should be deleted and use attrs
+	ChildClass string // should be deleted and use attrs
+	ID         string // should be deleted and use attrs
 	Attrs      map[string]string
 }
 
@@ -78,6 +78,11 @@ func (no *Node) UnmarshalYAML(n *yaml.Node) error {
 			no.ID = vn.Value
 		case "contents":
 			children = vn
+		default:
+			if no.Attrs == nil {
+				no.Attrs = map[string]string{}
+			}
+			no.Attrs[k] = vn.Value
 		}
 	}
 	expect := ""
@@ -201,13 +206,13 @@ func (no *Node) Node(f renderer.Frame) (*html.Node, error) {
 	return n, nil
 }
 
-func (no *HTML) UnmarshalYAML(n *yaml.Node) error {
+func (h *HTML) UnmarshalYAML(n *yaml.Node) error {
 	// todo: add error handling
 	contents, err := getElementAndContents(n)
 	if err != nil {
 		return err
 	}
-	no.Contents = contents["contents"].(*yaml.Node).Value
+	h.Contents = contents["contents"].(*yaml.Node).Value
 
 	return nil
 }
