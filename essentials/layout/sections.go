@@ -229,27 +229,4 @@ func (h *HTML) Node(f renderer.Frame) (*html.Node, error) {
 		Type: html.RawNode,
 		Data: h.Contents,
 	}, nil
-
-	//attr := []html.Attribute{}
-	//if no.Class != "" {
-	//	attr = append(attr, html.Attribute{
-	//		Key: "class",
-	//		Val: no.Class,
-	//	})
-	//}
-	//n := &html.Node{
-	//	Type: html.ElementNode,
-	//	Data: no.Element,
-	//	Attr: attr,
-	//}
-	//
-	//for _, c := range no.Contents {
-	//	sn, err := c.Node(f)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	n.AppendChild(sn)
-	//}
-
-	//return nil, nil
 }
